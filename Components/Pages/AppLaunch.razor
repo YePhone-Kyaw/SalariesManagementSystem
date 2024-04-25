@@ -1,0 +1,29 @@
+﻿@page "/"
+@using SalariesManagementSystem.Models
+@using SalariesManagementSystem.Services
+@using Newtonsoft.Json
+@inject NavigationManager NavManager;
+@inject IAppService AppService
+<h3>AppLaunch</h3>
+
+Loading....
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        // Assume that "UserDetails" is the key where user basic details are stored.
+        string userDetailsStr = await SecureStorage.GetAsync("UserDetails");
+
+        if (!string.IsNullOrWhiteSpace(userDetailsStr))
+        {
+            // If user details exist, navigate to the dashboard.
+            NavManager.NavigateTo("/dashboard");
+        }
+        else 
+        {
+            // If no user details are found, navigate to the login page.
+            NavManager.NavigateTo("/login");
+        } 
+
+    }
+}

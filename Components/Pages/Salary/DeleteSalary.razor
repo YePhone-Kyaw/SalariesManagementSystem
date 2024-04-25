@@ -1,0 +1,68 @@
+@page "/delete"
+@using SalariesManagementSystem.Data
+@using SalariesManagementSystem.Services
+@using SalariesManagementSystem.Models
+@using SalariesManagementSystem.Services
+@inject NavigationManager NavigationManager
+@inject ISalaryService SalaryService
+
+<EditForm Model="@deleteModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label class="text-center">Employee ID:</label>
+        <InputNumber class="form-control" @bind-Value="deleteModel.EmployeeID" />
+    </div>
+    <br />
+    <br />
+
+    <div class="text-center">
+        <button class="btn btn-danger" type="submit">
+           Delete Salary
+        </button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success mt-2">
+            @successMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">
+            @errorMessage
+        </div>
+    }
+</EditForm>
+
+@code {
+    private string errorMessage;
+    private string successMessage;
+
+    private DeleteModel deleteModel = new DeleteModel();
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await SalaryService.DeleteSalaryAsync(deleteModel.EmployeeID);
+            deleteModel = new DeleteModel();
+            NavigationManager.NavigateTo("/delete");
+            successMessage = "Salary deleted successfully.";
+            errorMessage = "";
+        }
+        catch (Exception ex)
+        {
+            successMessage = "";
+            errorMessage = $"Failed to delete salary: {ex.Message}";
+        }
+    }
+
+    public class DeleteModel
+    {
+        public int EmployeeID { get; set; }
+    }
+}

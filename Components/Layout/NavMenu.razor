@@ -1,0 +1,49 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">SalariesManagementSystem</a>
+    </div>
+</div>
+
+
+
+
+@* <input type="checkbox" title="Navigation menu" class="navbar-toggler" /> *@
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column"> 
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="add">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>
+                Add Salary
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="update">
+                <span><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></span>
+                Update Salary
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="delete">
+                <span class="bi bi-trash-fill" aria-hidden="true"></span>
+                Delete Salary
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="clear">
+                <span class="bi bi-x-diamond-fill" aria-hidden="true"></span>
+                Clear Salaries
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="filter">
+                <span class="bi bi-filter" aria-hidden="true"></span>
+                Filter Salaries
+            </NavLink>
+        </div>
+    </nav>
+</div>

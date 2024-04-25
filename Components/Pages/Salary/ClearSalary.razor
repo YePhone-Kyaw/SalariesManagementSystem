@@ -1,0 +1,47 @@
+@page "/clear"
+@using SalariesManagementSystem.Data
+@using SalariesManagementSystem.Services
+@inject NavigationManager NavigationManager
+@inject ISalaryService SalaryService
+
+<div class="text-center">
+    <h3>Are you sure you want to clear all salaries?</h3>
+    <button class="btn btn-danger" @onclick="HandleClear">
+        Clear Salaries
+    </button>
+</div>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success mt-2">
+        @successMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-2">
+        @errorMessage
+    </div>
+}
+
+@code {
+    private string errorMessage;
+    private string successMessage;
+
+    private async Task HandleClear()
+    {
+        try
+        {
+            await SalaryService.ClearSalariesAsync();
+            NavigationManager.NavigateTo("/clear");
+            successMessage = "All salaries have been cleared successfully.";
+            errorMessage = "";
+        }
+        catch (Exception ex)
+        {
+            successMessage = "";
+            errorMessage = $"Failed to add your information: {ex.Message}";
+        }
+    }
+}

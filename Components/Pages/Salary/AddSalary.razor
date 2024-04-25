@@ -1,0 +1,91 @@
+﻿@page "/add"
+@using SalariesManagementSystem.Data
+@using SalariesManagementSystem.Services
+@using SalariesManagementSystem.Models
+@using SalariesManagementSystem.Services
+@inject NavigationManager NavigationManager
+@inject ISalaryService SalaryService
+
+
+
+<EditForm Model="@salary" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label class="text-center">Employee ID:</label>
+        <InputNumber class="form-control" @bind-Value="salary.EmployeeID" />
+    </div>
+    <br />
+    <br />
+    <div>
+        <label class="text-center">Name:</label>
+        <InputText class="form-control" @bind-Value="salary.EmployeeName" />
+    </div>
+    <br />
+    <br />
+
+    <div>
+        <label class="text-center">Career:</label>
+        <InputText class="form-control" @bind-Value="salary.Career" />
+    </div>
+    <br />
+    <br />
+
+    <div>
+        <label class="text-center" >Salary Per Hour:</label>
+        <InputNumber class="form-control" @bind-Value="salary.Sal" />
+    </div>
+    <br />
+    <br />
+
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">
+           Add Salary
+        </button>
+
+    </div>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success mt-2">
+            @successMessage
+        </div>
+    }
+
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">
+            @errorMessage
+        </div>
+    }
+
+
+</EditForm>
+
+@code {
+    private string errorMessage;
+    private string successMessage;
+
+    private Salary salary = new Salary();
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await SalaryService.AddSalaryAsync(salary);
+            salary = new Salary();
+            NavigationManager.NavigateTo("/add");
+            successMessage = "Your information has been successfully added to our system.";
+            errorMessage = "";
+        }
+        catch (Exception ex)
+        {
+            successMessage = "";
+            errorMessage = $"Failed to add your information: {ex.Message}";
+        }
+    }
+
+}

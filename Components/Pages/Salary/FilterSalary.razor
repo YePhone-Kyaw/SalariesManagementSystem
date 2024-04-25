@@ -1,0 +1,94 @@
+@page "/filter"
+@using SalariesManagementSystem.Data
+@using SalariesManagementSystem.Services
+@using SalariesManagementSystem.Models
+@inject ISalaryService SalaryService
+
+<h3>Filter and Order Salaries</h3>
+
+<div>
+    <label>Order By:</label>
+    <select @bind="orderByOption">
+        <option value="Salary">Salary Amount</option>
+        <option value="Name">Name</option>
+    </select>
+    <button @onclick="FilterSalaries">Filter</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Career</th>
+            <th>Salary Per Hour</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var salary in filteredSalaries)
+        {
+            <tr>
+                <td>@salary.EmployeeID</td>
+                <td>@salary.EmployeeName</td>
+                <td>@salary.Career</td>
+                <td>@salary.Sal</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@code {
+    private List<Salary> salaries;
+    private List<Salary> filteredSalaries = new List<Salary>();
+    private string orderByOption = "Salary";
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSalaries();
+    }
+
+    private async Task LoadSalaries()
+    {
+        try
+        {
+            errorMessage = null; 
+            salaries = await SalaryService.GetAllSalariesAsync();
+            FilterAndOrderBy();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading salaries: {ex.Message}";
+        }
+    }
+
+    private void FilterAndOrderBy()
+    {
+        if (orderByOption == "Salary")
+        {
+            filteredSalaries = salaries.OrderBy(s => s.Sal).ToList();
+        }
+        else if (orderByOption == "Name")
+        {
+            filteredSalaries = salaries.OrderBy(s => s.EmployeeName).ToList();
+        }
+    }
+
+    private async Task FilterSalaries()
+    {
+        try
+        {
+            errorMessage = null; 
+            filteredSalaries = await SalaryService.FilterSalariesAsync(orderByOption);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error filtering salaries: {ex.Message}";
+        }
+    }
+}

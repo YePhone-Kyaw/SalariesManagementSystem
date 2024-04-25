@@ -1,0 +1,130 @@
+﻿@page "/update/{EmployeeID:Int}"
+@page "/update"
+@using SalariesManagementSystem.Data
+@using SalariesManagementSystem.Services
+@using SalariesManagementSystem.Models
+@using SalariesManagementSystem.Services
+@inject NavigationManager NavigationManager
+@inject ISalaryService SalaryService
+
+
+
+<EditForm Model="@salary" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label class="text-center">Employee ID:</label>
+        <InputNumber class="form-control" @bind-Value="salary.EmployeeID"  />
+    </div>
+    <br />
+    <br />
+    <div>
+        <label class="text-center">Name:</label>
+        <InputText class="form-control" @bind-Value="salary.EmployeeName" />
+    </div>
+    <br />
+    <br />
+
+    <div>
+        <label class="text-center">Career:</label>
+        <InputText class="form-control" @bind-Value="salary.Career" />
+    </div>
+    <br />
+    <br />
+
+    <div>
+        <label class="text-center">Salary Per Hour:</label>
+        <InputNumber class="form-control" @bind-Value="salary.Sal" />
+    </div>
+    <br />
+    <br />
+
+
+    <div class="text-center">
+        <button class="btn btn-primary" type="submit">
+            Update Salary
+        </button>
+
+    </div>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success">
+            @successMessage
+        </div>
+    }
+
+
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">
+            @errorMessage
+        </div>
+    }
+
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int ? EmployeeID { get; set; }
+    private string errorMessage;
+    private string successMessage;
+    private bool isValid = false;
+
+    private Salary salary = new Salary();
+
+    protected override async Task OnInitializedAsync() {
+        if (EmployeeID.HasValue && EmployeeID.Value > 0)
+        {
+            await FetchSalaryDetails();
+        }    
+    }
+
+    private async Task FetchSalaryDetails()
+    {
+        try
+        {
+            salary = await SalaryService.GetSalaryByIdAsync(EmployeeID.Value);
+            if (salary == null)
+            {
+                errorMessage = "Your information has not been found.";
+                isValid = false;
+            }
+            else
+            {
+                errorMessage = "";
+                isValid = true;  
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading your information: {ex.Message}";
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await SalaryService.UpdateSalaryAsync(salary);
+            NavigationManager.NavigateTo("/update");
+            successMessage = "Your information has been successfully updated.";
+            errorMessage = "";
+        } 
+        catch (InvalidOperationException iex)
+        {
+            errorMessage = $"Failed to update your information: {iex.Message} \n Your ID {salary.EmployeeID} does not exist in our system.";
+        }
+        catch (Exception ex)
+        {
+            successMessage = "";
+            errorMessage = $"Failed to update your information: {ex.Message}";
+        }
+
+    }
+
+}
+
